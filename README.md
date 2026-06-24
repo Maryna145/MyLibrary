@@ -1,6 +1,6 @@
 # MyLibrary Backend
 
-REST API for managing a personal book library with user registration, login, JWT authentication, and protected CRUD operations for books, series, and quotes.
+REST API for managing a personal book library with user registration, login, JWT authentication, and protected CRUD operations for books, series, and quotes. Features advanced capabilities like server-side pagination, text search, and multi-field filtration.
 
 ## Tech Stack
 
@@ -18,6 +18,11 @@ REST API for managing a personal book library with user registration, login, JWT
 - Get current authorized user info
 - Create, read, update, and delete books, book series, and book quotes
 - User-specific data: each user can access and manage only their own library records
+- Advanced `GET /api/books` capabilities:
+  - **Pagination:** Uses `page` and `limit` to optimize server load and responses.
+  - **Search:** Case-insensitive search by book title or author using MongoDB Regular Expressions (`$regex`).
+  - **Filtration:** Filter results dynamically by exact book `status`, `rating` or `genre`.
+  - **Sorting:** Automatically returns newer records first (`sort({ createdAt: -1 })`).
 - Cascade cleanups: deleting a book automatically deletes its quotes; deleting a series safely unlinks it from books
 - Data validation for ObjectIDs and request schemas (e.g., restricted book statuses)
 - Centralized error handling middleware
@@ -103,13 +108,22 @@ Bearer <accessToken>
 
 All book routes require a Bearer token.
 
-Get all books:
+Get books (Supports Pagination, Search, and Filtration):
 
 ```http
-GET /api/books
+GET /api/books?page=1&limit=5&search=Tolkien&status=READING&rating=5
 ```
 
-Create a book (Allowed statuses: `WISH`, `PURCHASED`, `READING`, `COMPLETED`, `ABANDONED`, `ON_HOLD`):
+Query Parameters (All optional):
+
+* `page` (number, default: 1) — Page number.
+* `limit` (number, default: 10) — Elements per page.
+* `search` (string) — Search keyword for `title` or `author` (case-insensitive).
+* `status` (string) — Filter by book status (`WISH`, `PURCHASED`, `READING`, `COMPLETED`, `ABANDONED`, `ON_HOLD`).
+* `rating` (number) — Filter by book rating (1 to 5).
+* `genre` (string) — Filter by book genre (`Fantasy`, `Dystopian`, `Psychology`, etc.)
+
+Create a book:
 
 ```http
 POST /api/books
