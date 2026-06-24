@@ -38,8 +38,45 @@ const pickBookFields = (body) => {
 }
 
 const getBooks = expressAsyncHandler(async (req, res) => {
-    const books =await Book.find({user_id: req.user.id}).populate("series", "name description");
-    res.status(200).json(books)
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const { search, status, rating, genre } = req.query;
+
+    const filter = { user_id: req.user.id };
+    if (search) {
+        filter.$or = [
+            { title: { $regex: search, $options: 'i' } },
+            { author: { $regex: search, $options: 'i' } }
+        ];
+    }
+    if (status) {
+        filter.status = status;
+    }
+    if (rating) {
+        filter.rating = parseInt(rating);
+    }
+    if (genre) {
+        filter.genre = genre;
+    }
+
+    const totalBooks = await Book.countDocuments(filter);
+    const books = await Book.find(filter)
+        .populate("series", "name description")
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 });
+
+    res.status(200).json({
+        books,
+        pagination: {
+            totalBooks,
+            currentPage: page,
+            limit,
+            totalPages: Math.ceil(totalBooks / limit)
+        }
+    });
 })
 const getBookByID = expressAsyncHandler(async (req, res) => {
     if (!isValidObjectId(req.params.id)) {
