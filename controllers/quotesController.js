@@ -14,7 +14,7 @@ const getQuotes = expressAsyncHandler(async (req, res) => {
 const getQuotesByID = expressAsyncHandler(async (req, res) => {
     if (!isValidObjectId(req.params.id)) {
         res.status(400)
-        throw new Error('Invalid book id')
+        throw new Error('Invalid quotes id')
     }
     const quote = await Quotes.findById(req.params.id).populate("book", "title author");
 
@@ -56,7 +56,7 @@ const createQuotes = expressAsyncHandler(async (req, res) => {
 const updateQuotes = expressAsyncHandler(async (req, res) => {
     if (!isValidObjectId(req.params.id)) {
         res.status(400)
-        throw new Error('Invalid book id')
+        throw new Error('Invalid quotes id')
     }
     const quote = await Quotes.findById(req.params.id)
     if(!quote){
@@ -78,7 +78,7 @@ const updateQuotes = expressAsyncHandler(async (req, res) => {
 const deleteQuotes = expressAsyncHandler(async (req, res) => {
     if (!isValidObjectId(req.params.id)) {
         res.status(400)
-        throw new Error('Invalid book id')
+        throw new Error('Invalid quotes id')
     }
     const quote = await Quotes.findById(req.params.id)
     if(!quote){

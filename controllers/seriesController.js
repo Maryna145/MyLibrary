@@ -14,7 +14,7 @@ const getSeries = expressAsyncHandler(async (req, res) => {
 const getSeriesByID = expressAsyncHandler(async (req, res) => {
     if (!isValidObjectId(req.params.id)) {
         res.status(400)
-        throw new Error('Invalid book id')
+        throw new Error('Invalid series id')
     }
     const series = await Series.findById(req.params.id)
     if(!series){
@@ -50,7 +50,7 @@ const createSeries = expressAsyncHandler(async (req, res) => {
 const updateSeries = expressAsyncHandler(async (req, res) => {
     if (!isValidObjectId(req.params.id)) {
         res.status(400)
-        throw new Error('Invalid book id')
+        throw new Error('Invalid series id')
     }
     const series = await Series.findById(req.params.id)
     if(!series){
@@ -72,7 +72,7 @@ const updateSeries = expressAsyncHandler(async (req, res) => {
 const deleteSeries = expressAsyncHandler(async (req, res) => {
     if (!isValidObjectId(req.params.id)) {
         res.status(400)
-        throw new Error('Invalid book id')
+        throw new Error('Invalid series id')
     }
     const series = await Series.findById(req.params.id)
     if(!series){
